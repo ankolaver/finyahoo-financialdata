@@ -14,11 +14,13 @@
 
 - Use Selenium to launch a browser for button click functionality (if needed; such as for expanding of table rows)
 - Gets the data and converts them to dataframe after cleaning up
+- Launches the queries concurrently (requires more ram and cpu unfortunately)
 
 #### possible improvements
 
 - Currently, if yahoo decides to update their website interface, this code is in trouble. 
-- current method requires launching a (headless) browser, and open a tab which slows down the program. Takes up to ~15 seconds for longer queries
+- current method requires launching a (headless) browser, and open a tab which slows down the program. Takes up to ~15 seconds for longer queries. 
+  - But running extraction in parallel for a given stock ticker allows time to be reduced considerably, eg. ~30 seconds for 3 concurrent queries
   - well, if it's too fast, that would open the potential for misuse? 
 
 #### Troubleshooting
@@ -50,16 +52,24 @@ def get_financial_data(ticker, statement_type, expanded=False, quarterly=False):
 4. `quarterly` (defaults to false)
    - If set to false, will get yearly data based on what you can see on Yahoo Finance
 
+```python
+# Allows you to get Cash Flow, Balance Sheet and Income Statement in one query
+# A Wrapper function over get_financial_data()
+def get_allstatements(ticker, statements):
+```
+1. `ticker` - Name of company in letters on finance yahoo
+2. `statements`- Array containing tuples with values corresponding to this order (statement_type, expanded, quarterly)
+
 
 To get a specific row, we can use use [pandas Dataframe methods!](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html)
 
 ```python
-df.loc[[row_name]]
+df[statement_type].loc[[row_name]]
 ```
 
 For getting a specific value, indexed by row and column name
 
 ```python
-df.at[row_name, col_name]
+df[statement_type].at[row_name, col_name]
 ```
 
